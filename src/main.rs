@@ -1,10 +1,9 @@
 extern crate chrono;
 
 mod people;
-
+mod output;
 
 fn main() {
     let data = people::data();
-
-    println!("{:#?}", data);
+    output::conky_out(data);
 }

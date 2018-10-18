@@ -1,8 +1,8 @@
+use chrono;
+use chrono::prelude::*;
 use chrono::offset::{Local, TimeZone};
 
-use chrono;
-
-use chrono::prelude::*;
+use std::cmp::Ordering;
 
 pub fn data() -> Vec<Person>{
     let mut vec = Vec::new();
@@ -10,10 +10,12 @@ pub fn data() -> Vec<Person>{
     vec.push(Person::new("Flora", "2016-02-20 20:42:00"));
     vec.push(Person::new("Bär", "1981-11-22 12:00:00"));
     vec.push(Person::new("Er", "1981-08-07 11:55:00"));
+    vec.sort();
     return vec;
 }
 
 #[derive(Debug)]
+#[derive(Eq)]
 pub struct Person {
     name: String,
     dob: chrono::DateTime<chrono::Local>,
@@ -32,6 +34,26 @@ impl Person {
         }
     }
 }
+
+// --- make the struct sortable by next birthday
+impl Ord for Person {
+    fn cmp(&self, other: &Person) -> Ordering {
+        self.next_birthday.cmp(&other.next_birthday)
+    }
+}
+
+impl PartialOrd for Person {
+    fn partial_cmp(&self, other: &Person) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl PartialEq for Person {
+    fn eq(&self, other: &Person) -> bool {
+        self.next_birthday == other.next_birthday
+    }
+}
+// --- end sortable
 
 fn parse_date_string(s: &str)-> chrono::DateTime<chrono::Local>{
     return Local.datetime_from_str(&s, "%Y-%m-%d %H:%M:%S").unwrap();
