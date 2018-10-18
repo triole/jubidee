@@ -7,7 +7,7 @@ use std::cmp::Ordering;
 #[derive(Debug)]
 pub struct Data {
     now: chrono::DateTime<chrono::Local>,
-    people: Vec<Person>,
+    pub people: Vec<Person>,
 }
 
 impl Data {
@@ -30,6 +30,16 @@ impl Data {
         self.people.push(p);
     }
 
+    pub fn conky_output(&self){
+        for p in &self.people{
+            println!("{}\t{}\t{}",
+                p.name,
+                p.next_birthday.format("%a %b %e %T %Y"),
+                p.age.num_days()
+            );
+        }
+    }
+
     fn parse_date_string(&self, s: &str) -> chrono::DateTime<chrono::Local> {
         return Local.datetime_from_str(&s, "%Y-%m-%d %H:%M:%S").unwrap();
     }
@@ -39,7 +49,7 @@ impl Data {
         d1: &chrono::DateTime<chrono::Local>,
         d2: &chrono::DateTime<chrono::Local>,
     ) -> chrono::Duration {
-        return d2.signed_duration_since(d1.to_owned());
+        return d1.signed_duration_since(d2.to_owned());
     }
 
     fn next_birthday(
