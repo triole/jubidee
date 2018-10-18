@@ -2,6 +2,7 @@ use chrono::offset::{Local, TimeZone};
 
 use chrono;
 
+use chrono::prelude::*;
 
 pub fn data() -> Vec<Person>{
     let mut vec = Vec::new();
@@ -15,25 +16,36 @@ pub fn data() -> Vec<Person>{
 #[derive(Debug)]
 pub struct Person {
     name: String,
-    dob: String,
+    dob: chrono::DateTime<chrono::Local>,
     age: chrono::Duration,
+    next_birthday: chrono::DateTime<chrono::Local>,
 }
 
 impl Person {
     fn new(name: &str, dob: &str) -> Person {
+        let dob_date = parse_date_string(dob);
         Person {
             name: name.to_string(),
-            dob: dob.to_string(),
-            age: date_delta(Local::now(), dob)
+            dob: dob_date,
+            age: date_delta(&Local::now(), &dob_date),
+            next_birthday: next_birthday(&dob_date)
         }
     }
 }
 
-pub fn parse_string(s: &str)-> chrono::DateTime<chrono::Local>{
+fn parse_date_string(s: &str)-> chrono::DateTime<chrono::Local>{
     return Local.datetime_from_str(&s, "%Y-%m-%d %H:%M:%S").unwrap();
 }
 
-pub fn date_delta(d1: chrono::DateTime<chrono::Local>, s2: &str) -> chrono::Duration{
-    let d2 = parse_string(&s2);
-    return d2.signed_duration_since(d1);
+fn date_delta(d1: &chrono::DateTime<chrono::Local>, d2: &chrono::DateTime<chrono::Local>) -> chrono::Duration{
+    return d2.signed_duration_since(d1.to_owned());
+}
+
+fn next_birthday(dob: &chrono::DateTime<chrono::Local>) -> chrono::DateTime<chrono::Local>{
+    let current_year = Local::now().year();
+    let mut next_birthday = dob.with_year(current_year).unwrap();
+    if next_birthday < Local::now() {
+        next_birthday = dob.with_year(current_year+1).unwrap();
+    }
+    return next_birthday
 }
