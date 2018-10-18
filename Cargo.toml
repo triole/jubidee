@@ -1,0 +1,7 @@
+[package]
+name = "clan-ages"
+version = "0.1.0"
+authors = ["Olaf Michaelis <omichaelis@aip.de>"]
+
+[dependencies]
+chrono = "0.4"
