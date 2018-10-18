@@ -42,16 +42,17 @@ impl Data {
                 {nbdow}\
                 {nbdur:>width_nbdur$}d\
                 ",
+                name=p.name, width_name=25,
                 age=p.age.num_days(), width_age=6,
-                name=p.name, width_name=8,
-                nbdow=p.next_birthday.format("   %a %d.%m.%y"),
+                nbdow=p.next_birthday.format("  %a %d.%m.%y"),
                 nbdur=p.duration_to_nb.num_days(), width_nbdur=5,
             );
         }
     }
 
     fn parse_date_string(&self, s: &str) -> chrono::DateTime<chrono::Local> {
-        return Local.datetime_from_str(&s, "%Y-%m-%d %H:%M:%S").unwrap();
+        let t = s.to_owned() + " 00:00:00";
+        return Local.datetime_from_str(&t, "%Y%m%d %H:%M:%S").unwrap();
     }
 
     fn date_delta(
