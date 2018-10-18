@@ -21,21 +21,31 @@ impl Data {
 
     pub fn add(&mut self, name: &str, dob: &str) {
         let dob_date = self.parse_date_string(dob);
+        let nb = self.next_birthday(&dob_date);
         let p = Person {
             name: name.to_string(),
             dob: dob_date,
             age: self.date_delta(&self.now, &dob_date),
-            next_birthday: self.next_birthday(&dob_date),
+            next_birthday: nb,
+            duration_to_nb: self.date_delta(&nb, &self.now)
         };
         self.people.push(p);
     }
 
     pub fn conky_output(&self){
         for p in &self.people{
-            println!("{}\t{}\t{}",
-                p.name,
-                p.next_birthday.format("%a %b %e %T %Y"),
-                p.age.num_days()
+            // println!("{number:>width$}", number=1, width=6);
+            println!(
+                "\
+                {name:<width_name$}\
+                {age:>width_age$}\
+                {nbdow}\
+                {nbdur:>width_nbdur$}d\
+                ",
+                age=p.age.num_days(), width_age=6,
+                name=p.name, width_name=8,
+                nbdow=p.next_birthday.format("   %a %d.%m.%y"),
+                nbdur=p.duration_to_nb.num_days(), width_nbdur=5,
             );
         }
     }
@@ -71,6 +81,7 @@ pub struct Person {
     dob: chrono::DateTime<chrono::Local>,
     age: chrono::Duration,
     next_birthday: chrono::DateTime<chrono::Local>,
+    duration_to_nb: chrono::Duration,
 }
 
 // --- make the struct sortable by next birthday
