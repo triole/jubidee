@@ -10,11 +10,12 @@ pub fn now() -> chrono::DateTime<chrono::Local>{
     return Local::now();
 }
 
-pub fn date_delta() -> chrono::Duration{
-    let d1 = now();
-    let d2 = Local.datetime_from_str(&"Jan 30 02:19:17 2018", "%b %d %H:%M:%S %Y").unwrap();
+pub fn parse_string(s: &str)-> chrono::DateTime<chrono::Local>{
+    return Local.datetime_from_str(&s, "%Y-%M-%d %H:%M:%S").unwrap();
+}
+
+pub fn date_delta(s1: &str, s2: &str) -> chrono::Duration{
+    let d1 = parse_string(s1);
+    let d2 = parse_string(s2);
     return d2.signed_duration_since(d1);
-    // return delta;
-    // println!("Duration: {:?}", duration);
-    // println!("As whole days: {:?}", duration.num_days());
 }

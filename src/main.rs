@@ -1,13 +1,10 @@
 extern crate chrono;
 
-mod config;
-mod date;
+mod people;
 
 
 fn main() {
-    println!("{:#?}", date::now());
-    println!("{:#?}", date::date_delta());
-    println!("{:#?}", date::date_delta().num_days());
+    let data = people::data();
 
-    println!("{:?}", config::people());
+    println!("{:#?}", data);
 }
