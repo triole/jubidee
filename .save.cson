@@ -1,0 +1,4 @@
+# save autorun definitions
+# https://atom.io/packages/save-autorun
+
+"**/*.*": "rustfmt ${path}"
