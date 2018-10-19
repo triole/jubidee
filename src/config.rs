@@ -1,10 +1,10 @@
-use std::collections::HashMap;
 use serde_yaml;
+use std::collections::HashMap;
 
 use std::error::Error;
 use std::fs::File;
-use std::path::Path;
 use std::io::prelude::*;
+use std::path::Path;
 use std::process;
 
 pub fn read(filename: &str) -> HashMap<String, u32> {
