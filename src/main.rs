@@ -4,6 +4,7 @@ extern crate serde_yaml;
 mod config;
 mod env;
 mod people;
+mod number_magic;
 
 fn main() {
     let config = config::read(&env::config_file());
