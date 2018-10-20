@@ -37,7 +37,7 @@ impl Data {
             next_birthday: Duration {
                 date: next_birthday,
                 in_duration: next_birthday_duration,
-                in_days: next_birthday_duration.num_days() as u32,
+                in_days: (next_birthday_duration.num_days() as u32) + 1,
                 in_years: birthday_over_this_year as u32,
             },
         };
@@ -53,8 +53,7 @@ impl Data {
                  {age_in_years:>width_age_in_years$}\
                  {age_in_days:>width_age_in_days$}\
                  {nbdow}\
-                 {nbdur:>width_nbdur$}d\
-                 {n}\
+                 {nbdur:>width_nbdur$}\
                  ",
                 name = p.name,
                 width_name = 25,
@@ -65,7 +64,6 @@ impl Data {
                 nbdow = p.next_birthday.date.format("  %a %d.%m.%y"),
                 nbdur = p.next_birthday.in_days,
                 width_nbdur = 5,
-                n = number_magic::next_repdigit(p.age.in_days)
             );
         }
     }
@@ -170,4 +168,11 @@ impl PartialEq for Duration {
     fn eq(&self, other: &Duration) -> bool {
         self.in_days == other.in_days
     }
+}
+
+#[test]
+fn test_name() {
+    // TODO: make more and better tests
+    let mut data = Data::init();
+    data.add("Foo", "20181018");
 }

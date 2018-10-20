@@ -3,8 +3,8 @@ extern crate serde_yaml;
 
 mod config;
 mod env;
-mod people;
 mod number_magic;
+mod people;
 
 fn main() {
     let config = config::read(&env::config_file());
