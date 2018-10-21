@@ -4,6 +4,7 @@ use chrono::prelude::*;
 use std::cmp::Ordering;
 
 use number_magic;
+use util;
 
 #[derive(Debug)]
 pub struct Data {
@@ -12,9 +13,9 @@ pub struct Data {
 }
 
 impl Data {
-    pub fn init() -> Self {
+    pub fn init(s: &str) -> Self {
         let d = Data {
-            now: Local::now(),
+            now: util::parse_date_string(s),
             people: Vec::new(),
         };
         return d;
@@ -173,6 +174,8 @@ impl PartialEq for Duration {
 #[test]
 fn test_name() {
     // TODO: make more and better tests
-    let mut data = Data::init();
-    data.add("Foo", "20181018");
+    let mut data = Data::init("20180101");
+    data.add("Foo", "20180101");
+    assert_eq!(data.people[0].age.in_years, 0);
+    assert_eq!(data.people[0].age.in_days, 0);
 }

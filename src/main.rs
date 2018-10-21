@@ -5,11 +5,12 @@ mod config;
 mod env;
 mod number_magic;
 mod people;
+mod util;
 
 fn main() {
     let config = config::read(&env::config_file());
 
-    let mut data = people::Data::init();
+    let mut data = people::Data::init(&"now".to_string());
     for (name, dob) in config {
         data.add(&name, &dob.to_string())
     }
