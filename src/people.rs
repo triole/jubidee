@@ -22,13 +22,14 @@ impl Data {
     }
 
     pub fn add(&mut self, name: &str, dob: &str) {
-        let day_of_birth = self.parse_date_string(dob);
+        let day_of_birth = util::parse_date_string(dob);
         let birthday_over_this_year = self.birthday_over_this_year(&day_of_birth);
         let age_duration = self.date_delta(&self.now, &day_of_birth);
         let next_birthday = self.next_birthday(&day_of_birth, birthday_over_this_year);
         let next_birthday_duration = self.date_delta(&next_birthday, &self.now);
         let p = Person {
             name: name.to_string(),
+            birthday_over_this_year: birthday_over_this_year,
             age: Duration {
                 date: day_of_birth,
                 in_duration: age_duration,
@@ -38,8 +39,8 @@ impl Data {
             next_birthday: Duration {
                 date: next_birthday,
                 in_duration: next_birthday_duration,
-                in_days: (next_birthday_duration.num_days() as u32) + 1,
-                in_years: birthday_over_this_year as u32,
+                in_days: (next_birthday_duration.num_days() as u32),
+                in_years: self.years_to_next_birthday(birthday_over_this_year),
             },
         };
         self.people.push(p);
@@ -69,9 +70,33 @@ impl Data {
         }
     }
 
-    fn parse_date_string(&self, s: &str) -> chrono::DateTime<chrono::Local> {
-        let t = s.to_owned() + " 00:00:00";
-        return Local.datetime_from_str(&t, "%Y%m%d %H:%M:%S").unwrap();
+    fn age_in_years(
+        &self,
+        dob: &chrono::DateTime<chrono::Local>,
+        birthday_over_this_year: i8,
+    ) -> i32 {
+        let mut age_in_years: i32 = self.now.year() - dob.year();
+        if birthday_over_this_year == -1 {
+            age_in_years -= 1;
+        }
+        if age_in_years < 0 {
+            age_in_years = 0
+        };
+        return age_in_years;
+    }
+
+    // returns: -1 if not over, 0 if on day, 1 if over
+    // three values necessary, for age calculation we need to know if there is a birthday party
+    fn birthday_over_this_year(&self, dob: &chrono::DateTime<chrono::Local>) -> i8 {
+        let mut b = -1;
+        let current_year = self.now.year();
+        let next_birthday = dob.with_year(current_year).unwrap();
+        if next_birthday == self.now {
+            b = 0;
+        } else if next_birthday < self.now {
+            b = 1;
+        }
+        return b;
     }
 
     fn date_delta(
@@ -82,23 +107,13 @@ impl Data {
         return d1.signed_duration_since(d2.to_owned());
     }
 
-    fn birthday_over_this_year(&self, dob: &chrono::DateTime<chrono::Local>) -> bool {
-        let mut b = false;
-        let current_year = self.now.year();
-        let next_birthday = dob.with_year(current_year).unwrap();
-        if next_birthday < self.now {
-            b = true;
-        }
-        return b;
-    }
-
     fn next_birthday(
         &self,
         dob: &chrono::DateTime<chrono::Local>,
-        birthday_over_this_year: bool,
+        birthday_over_this_year: i8,
     ) -> chrono::DateTime<chrono::Local> {
         let next_birthday: chrono::DateTime<chrono::Local>;
-        if birthday_over_this_year == false {
+        if birthday_over_this_year <= 0 {
             next_birthday = dob.with_year(self.now.year()).unwrap();
         } else {
             next_birthday = dob.with_year(self.now.year() + 1).unwrap();
@@ -106,22 +121,19 @@ impl Data {
         return next_birthday;
     }
 
-    fn age_in_years(
-        &self,
-        dob: &chrono::DateTime<chrono::Local>,
-        birthday_over_this_year: bool,
-    ) -> i32 {
-        let mut age_in_years: i32 = self.now.year() - dob.year();
-        if birthday_over_this_year == true {
-            age_in_years += 1;
+    fn years_to_next_birthday(&self, birthday_over_this_year: i8) -> u32 {
+        let mut r = 1;
+        if birthday_over_this_year < 1 {
+            r = 0;
         }
-        return age_in_years;
+        return r;
     }
 }
 
 #[derive(Debug, Eq)]
 pub struct Person {
     name: String,
+    birthday_over_this_year: i8,
     age: Duration,
     next_birthday: Duration,
 }
@@ -171,11 +183,66 @@ impl PartialEq for Duration {
     }
 }
 
+// --- testing
 #[test]
 fn test_name() {
-    // TODO: make more and better tests
-    let mut data = Data::init("20180101");
-    data.add("Foo", "20180101");
-    assert_eq!(data.people[0].age.in_years, 0);
-    assert_eq!(data.people[0].age.in_days, 0);
+    assert_person_data("20180101", "P1", "20180101", 0, 0, "20180101", 0, 0);
+    assert_person_data("20110807", "P2", "19810807", 30, 10957, "20110807", 0, 0);
+    assert_person_data("20200101", "P3", "20180101", 2, 730, "20200101", 0, 0);
+    assert_person_data("20200101", "P4", "20180130", 1, 701, "20200130", 0, 29);
+    assert_person_data("20200201", "P5", "20180130", 2, 732, "20210130", 1, 364);
+    assert_person_data("20181021", "P6", "19261021", 92, 33602, "20181021", 0, 0);
+    assert_person_data("20181022", "P7", "19561023", 61, 22643, "20181023", 0, 1);
+}
+
+fn assert_person_data(
+    base_date: &str,
+    name: &str,
+    birth_date: &str,
+    assert_age_in_years: u32,
+    assert_age_in_days: u32,
+    assert_next_birthday_date: &str,
+    assert_next_birthday_in_years: u32,
+    assert_next_birthday_in_days: u32,
+) {
+    let mut data = Data::init(base_date);
+    data.add(name, birth_date);
+    let p = &data.people[0];
+    assert!(
+        p.age.in_years == assert_age_in_years,
+        "Assertion age in years failed: {} != {}, \n {:#?}",
+        p.age.in_years,
+        assert_age_in_years,
+        data
+    );
+    assert!(
+        p.age.in_days == assert_age_in_days,
+        "age in days assertion failed: {} != {}, \n {:#?}",
+        p.age.in_days,
+        assert_age_in_days,
+        data
+    );
+    let t = assert_next_birthday_date.to_owned() + " 00:00:00";
+    let nb = Local.datetime_from_str(&t, "%Y%m%d %H:%M:%S").unwrap();
+    assert!(
+        p.next_birthday.date == nb,
+        "next birthday date failed: {} != {}, \n {:#?}",
+        p.next_birthday.date,
+        nb,
+        data
+    );
+    assert!(
+        p.next_birthday.in_years == assert_next_birthday_in_years,
+        "next birthday in years assertion failed: {} != {}, \n {:#?}",
+        p.next_birthday.in_years,
+        assert_next_birthday_in_years,
+        data
+    );
+    assert!(
+        p.next_birthday.in_days == assert_next_birthday_in_days,
+        "next birthday in days assertion failed: {} != {}, \n {:#?}",
+        p.next_birthday.in_days,
+        assert_next_birthday_in_days,
+        data
+    );
 }
