@@ -23,11 +23,11 @@ pub fn bool(args: &ArgMatches, argname: &str) -> bool {
 //     }
 // }
 //
-// pub fn val_usize(args: &ArgMatches, argname: &str) -> usize {
-//     let v = args.value_of(argname).unwrap();
-//     let val = v.parse::<usize>().unwrap();
-//     return val;
-// }
+pub fn val_usize(args: &ArgMatches, argname: &str) -> usize {
+    let v = args.value_of(argname).unwrap();
+    let val = v.parse::<usize>().unwrap();
+    return val;
+}
 //
 // pub fn val_op_usize(args: &ArgMatches, argname: &str) -> Option<usize> {
 //     if bool(args, argname) == true {

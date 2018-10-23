@@ -67,8 +67,9 @@ impl Data {
         return d;
     }
 
-    pub fn print_birthdays(&self) {
-        for p in &self.people {
+    pub fn print_birthdays(&self, limit: &usize) {
+        let l = limit.to_owned();
+        for p in &self.people[0..l] {
             println!(
                 "\
                  {name:<width_name$}\
@@ -90,8 +91,9 @@ impl Data {
         }
     }
 
-    pub fn print_jubidees(&self) {
-        for p in &self.people {
+    pub fn print_jubidees(&self, limit: &usize) {
+        let l = limit.to_owned();
+        for p in &self.people[0..l] {
             println!(
                 "\
                  {name:<width_name$}\

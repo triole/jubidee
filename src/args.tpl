@@ -10,3 +10,12 @@ args:
         takes_value:   false
         multiple:      false
         required:      false
+    - limit:
+            short:         l
+            long:          limit
+            help:          maximum number of final output list entries
+            default_value: "0"
+            value_name:    INT
+            takes_value:   true
+            multiple:      false
+            required:      false
