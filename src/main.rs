@@ -29,12 +29,22 @@ fn main() {
     // print
     let limit = argparse::val_usize(&args, "limit");
     if argparse::bool(&args, "jubidee") == true {
-        data.people
-            .sort_by(|a, b| a.next_jubidee.cmp(&b.next_jubidee));
+        if argparse::bool(&args, "reverse") == true {
+            data.people
+                .sort_by(|a, b| a.next_jubidee.cmp(&b.next_jubidee).reverse());
+        } else {
+            data.people
+                .sort_by(|a, b| a.next_jubidee.cmp(&b.next_jubidee));
+        }
         data.print_jubidees(&limit);
     } else {
-        data.people
-            .sort_by(|a, b| a.next_birthday.cmp(&b.next_birthday));
+        if argparse::bool(&args, "reverse") == true {
+            data.people
+                .sort_by(|a, b| a.next_birthday.cmp(&b.next_birthday).reverse());
+        } else {
+            data.people
+                .sort_by(|a, b| a.next_birthday.cmp(&b.next_birthday));
+        }
         data.print_birthdays(&limit);
     }
 }

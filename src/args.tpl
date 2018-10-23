@@ -11,11 +11,18 @@ args:
         multiple:      false
         required:      false
     - limit:
-            short:         l
-            long:          limit
-            help:          maximum number of final output list entries
-            default_value: "0"
-            value_name:    INT
-            takes_value:   true
-            multiple:      false
-            required:      false
+        short:         l
+        long:          limit
+        help:          maximum number of final output list entries
+        default_value: "0"
+        value_name:    INT
+        takes_value:   true
+        multiple:      false
+        required:      false
+    - reverse:
+        short:         r
+        long:          reverse
+        help:          sort list in reverse order
+        takes_value:   false
+        multiple:      false
+        required:      false

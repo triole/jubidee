@@ -79,11 +79,11 @@ impl Data {
                  {next_birthday_in_days:>width_next_birthday_in_days$}\
                  ",
                 name = p.name,
-                width_name = 25,
+                width_name = 27,
                 age_in_years = p.age.in_years,
                 width_age_in_years = 4,
                 age_in_days = p.age.in_days,
-                width_age_in_days = 6,
+                width_age_in_days = 7,
                 next_birthday_date = p.next_birthday.date.format("  %a %d.%m.%y"),
                 next_birthday_in_days = p.next_birthday.in_days,
                 width_next_birthday_in_days = 5,
@@ -97,7 +97,6 @@ impl Data {
             println!(
                 "\
                  {name:<width_name$}\
-                 {age_in_years:>width_age_in_years$}\
                  {age_in_days:>width_age_in_days$}\
                  {next_jubidee_date}\
                  {next_jubidee:>width_next_jubidee$}\
@@ -105,8 +104,6 @@ impl Data {
                  ",
                 name = p.name,
                 width_name = 25,
-                age_in_years = p.age.in_years,
-                width_age_in_years = 4,
                 age_in_days = p.age.in_days,
                 width_age_in_days = 6,
                 next_jubidee_date = p.next_jubidee.date.format("  %a %d.%m.%y"),
