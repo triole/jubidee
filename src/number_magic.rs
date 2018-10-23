@@ -1,4 +1,7 @@
-pub fn next_jubidee(number: u32) -> u32 {
+use people;
+
+// jubidee calculation
+pub fn next_jubidee_number(number: u32) -> u32 {
     let mut v: Vec<u32> = Vec::new();
     v.push(next_jubilee(number));
     v.push(next_repdigit(number));
@@ -7,7 +10,7 @@ pub fn next_jubidee(number: u32) -> u32 {
 }
 
 // jubilee related
-pub fn next_jubilee(number: u32) -> u32 {
+fn next_jubilee(number: u32) -> u32 {
     let mut base_jubilee = make_base_jubilee(number);
     let jubistep = determine_jubistep(number);
     while base_jubilee < number {
@@ -62,7 +65,7 @@ fn make_repdigit(digit: &str, length: usize) -> u32 {
     return u;
 }
 
-pub fn next_repdigit(number: u32) -> u32 {
+fn next_repdigit(number: u32) -> u32 {
     let mut next_repdigit = make_base_repdigit(number);
     let incrementor = make_repdigit("1", get_length(number));
     while next_repdigit < number
@@ -89,7 +92,6 @@ fn replace_last_characters(number: u32, last_n: usize) -> u32 {
     if number > 10 {
         let mut s = String::new();
         let number_str = number.to_string();
-        println!("{:?}", number_str.len());
         for (i, n) in number_str.chars().enumerate() {
             if i >= number_str.len() - (last_n) {
                 s.push('0');
@@ -106,10 +108,10 @@ fn replace_last_characters(number: u32, last_n: usize) -> u32 {
 
 #[test]
 fn test_next_jubidee() {
-    assert_eq!(next_jubidee(5), 10);
-    assert_eq!(next_jubidee(41), 44);
-    assert_eq!(next_jubidee(99), 99);
-    assert_eq!(next_jubidee(101), 111);
+    assert_eq!(next_jubidee_number(5), 10);
+    assert_eq!(next_jubidee_number(41), 44);
+    assert_eq!(next_jubidee_number(99), 99);
+    assert_eq!(next_jubidee_number(101), 111);
 }
 
 // jubilee tests

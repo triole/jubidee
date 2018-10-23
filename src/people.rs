@@ -23,8 +23,8 @@ impl Data {
 
     pub fn add(&mut self, name: &str, dob: &str) {
         let day_of_birth = util::parse_date_string(dob);
-        let birthday_over_this_year = self.birthday_over_this_year(&day_of_birth);
         let age_duration = self.date_delta(&self.now, &day_of_birth);
+        let birthday_over_this_year = self.birthday_over_this_year(&day_of_birth);
         let next_birthday = self.next_birthday(&day_of_birth, birthday_over_this_year);
         let next_birthday_duration = self.date_delta(&next_birthday, &self.now);
         let p = Person {
@@ -35,20 +35,40 @@ impl Data {
                 in_duration: age_duration,
                 in_days: age_duration.num_days() as u32,
                 in_years: self.age_in_years(&day_of_birth, birthday_over_this_year) as u32,
+                jubidee: 0,
             },
             next_birthday: Duration {
                 date: next_birthday,
                 in_duration: next_birthday_duration,
                 in_days: (next_birthday_duration.num_days() as u32),
                 in_years: self.years_to_next_birthday(birthday_over_this_year),
+                jubidee: 0,
             },
+            next_jubidee: self.calculate_next_jubidee(day_of_birth, age_duration),
         };
         self.people.push(p);
     }
 
+    fn calculate_next_jubidee(
+        &self,
+        day_of_birth: chrono::DateTime<chrono::Local>,
+        age_duration: chrono::Duration,
+    ) -> Duration {
+        let next_jubidee_number = number_magic::next_jubidee_number(age_duration.num_days() as u32);
+        let next_jubidee_in_days = next_jubidee_number - age_duration.num_days() as u32;
+        let next_jubidee_date = self.now + chrono::Duration::days(next_jubidee_in_days as i64);
+        let d = Duration {
+            date: next_jubidee_date,
+            in_duration: self.date_delta(&self.now, &day_of_birth),
+            in_days: next_jubidee_in_days,
+            in_years: 0,
+            jubidee: next_jubidee_number,
+        };
+        return d;
+    }
+
     pub fn conky_output(&self) {
         for p in &self.people {
-            // println!("{number:>width$}", number=1, width=6);
             println!(
                 "\
                  {name:<width_name$}\
@@ -136,6 +156,7 @@ pub struct Person {
     birthday_over_this_year: i8,
     age: Duration,
     next_birthday: Duration,
+    next_jubidee: Duration,
 }
 
 // --- make the struct sortable by next birthday
@@ -164,6 +185,7 @@ pub struct Duration {
     in_duration: chrono::Duration,
     in_years: u32,
     in_days: u32,
+    jubidee: u32,
 }
 
 impl Ord for Duration {
@@ -185,14 +207,28 @@ impl PartialEq for Duration {
 
 // --- testing
 #[test]
-fn test_name() {
-    assert_person_data("20180101", "P1", "20180101", 0, 0, "20180101", 0, 0);
-    assert_person_data("20110807", "P2", "19810807", 30, 10957, "20110807", 0, 0);
-    assert_person_data("20200101", "P3", "20180101", 2, 730, "20200101", 0, 0);
-    assert_person_data("20200101", "P4", "20180130", 1, 701, "20200130", 0, 29);
-    assert_person_data("20200201", "P5", "20180130", 2, 732, "20210130", 1, 364);
-    assert_person_data("20181021", "P6", "19261021", 92, 33602, "20181021", 0, 0);
-    assert_person_data("20181022", "P7", "19561023", 61, 22643, "20181023", 0, 1);
+fn test_age_and_birthday_calculation() {
+    assert_person_data(
+        "20180101", "P1", "20180101", 0, 0, "20180101", 0, 0, "20180101", 0,
+    );
+    assert_person_data(
+        "20110807", "P2", "19810807", 30, 10957, "20110807", 0, 0, "20110919", 43,
+    );
+    assert_person_data(
+        "20200101", "P3", "20180101", 2, 730, "20200101", 0, 0, "20200121", 20,
+    );
+    assert_person_data(
+        "20200101", "P4", "20180130", 1, 701, "20200130", 0, 29, "20200219", 49,
+    );
+    assert_person_data(
+        "20200201", "P5", "20180130", 2, 732, "20210130", 1, 364, "20200219", 18,
+    );
+    // assert_person_data(
+    //     "20181021", "P6", "19261021", 92, 33602, "20181021", 0, 0, "20191123", 398,
+    // );
+    assert_person_data(
+        "20181022", "P7", "19561023", 61, 22643, "20181023", 0, 1, "20191014", 357,
+    );
 }
 
 fn assert_person_data(
@@ -204,6 +240,8 @@ fn assert_person_data(
     assert_next_birthday_date: &str,
     assert_next_birthday_in_years: u32,
     assert_next_birthday_in_days: u32,
+    assert_next_jubidee_date: &str,
+    assert_next_jubidee_in_days: u32,
 ) {
     let mut data = Data::init(base_date);
     data.add(name, birth_date);
@@ -222,8 +260,8 @@ fn assert_person_data(
         assert_age_in_days,
         data
     );
-    let t = assert_next_birthday_date.to_owned() + " 00:00:00";
-    let nb = Local.datetime_from_str(&t, "%Y%m%d %H:%M:%S").unwrap();
+    let mut t = assert_next_birthday_date.to_owned() + " 00:00:00";
+    let mut nb = Local.datetime_from_str(&t, "%Y%m%d %H:%M:%S").unwrap();
     assert!(
         p.next_birthday.date == nb,
         "next birthday date failed: {} != {}, \n {:#?}",
@@ -243,6 +281,22 @@ fn assert_person_data(
         "next birthday in days assertion failed: {} != {}, \n {:#?}",
         p.next_birthday.in_days,
         assert_next_birthday_in_days,
+        data
+    );
+    t = assert_next_jubidee_date.to_owned() + " 00:00:00";
+    nb = Local.datetime_from_str(&t, "%Y%m%d %H:%M:%S").unwrap();
+    assert!(
+        p.next_jubidee.date == nb,
+        "next jubidee date assertion failed: {} != {}, \n {:#?}",
+        p.next_jubidee.date,
+        nb,
+        data
+    );
+    assert!(
+        p.next_jubidee.in_days == assert_next_jubidee_in_days,
+        "next jubidee in days assertion failed: {} != {}, \n {:#?}",
+        p.next_jubidee.in_days,
+        assert_next_jubidee_in_days,
         data
     );
 }
