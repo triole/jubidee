@@ -14,7 +14,7 @@ fn main() {
     for (name, dob) in config {
         data.add(&name, &dob.to_string())
     }
-    data.people.sort();
-
+    data.sort_by_next_birthday();
+    data.sort_by_next_jubidee();
     data.conky_output();
 }

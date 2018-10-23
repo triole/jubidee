@@ -1,5 +1,3 @@
-use people;
-
 // jubidee calculation
 pub fn next_jubidee_number(number: u32) -> u32 {
     let mut v: Vec<u32> = Vec::new();

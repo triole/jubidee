@@ -148,6 +148,17 @@ impl Data {
         }
         return r;
     }
+
+    // sorting methods, note these of course require the ord trait, see below
+    pub fn sort_by_next_birthday(mut self) {
+        &self.people
+            .sort_by(|a, b| a.next_birthday.cmp(&b.next_birthday));
+    }
+
+    pub fn sort_by_next_jubidee(mut self) {
+        &self.people
+            .sort_by(|a, b| a.next_jubidee.cmp(&b.next_jubidee));
+    }
 }
 
 #[derive(Debug, Eq)]
@@ -155,8 +166,8 @@ pub struct Person {
     name: String,
     birthday_over_this_year: i8,
     age: Duration,
-    next_birthday: Duration,
-    next_jubidee: Duration,
+    pub next_birthday: Duration,
+    pub next_jubidee: Duration,
 }
 
 // --- make the struct sortable by next birthday
