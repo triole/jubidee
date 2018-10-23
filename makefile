@@ -21,7 +21,7 @@ run_build:
 	mv "target/release/${APP_NAME}" "${TARGET_BUILD}"
 	strip "${TARGET_BUILD}"
 	cp config/${APP_NAME}.yaml ${TARGET_FOLDER}/
-	hyperfine "${TARGET_BUILD}" -m 1000
+	hyperfine "${TARGET_BUILD}"
 
 run_test:
 	cargo test

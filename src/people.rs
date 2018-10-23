@@ -67,15 +67,15 @@ impl Data {
         return d;
     }
 
-    pub fn conky_output(&self) {
+    pub fn print_birthdays(&self) {
         for p in &self.people {
             println!(
                 "\
                  {name:<width_name$}\
                  {age_in_years:>width_age_in_years$}\
                  {age_in_days:>width_age_in_days$}\
-                 {nbdow}\
-                 {nbdur:>width_nbdur$}\
+                 {next_birthday_date}\
+                 {next_birthday_in_days:>width_next_birthday_in_days$}\
                  ",
                 name = p.name,
                 width_name = 25,
@@ -83,9 +83,35 @@ impl Data {
                 width_age_in_years = 4,
                 age_in_days = p.age.in_days,
                 width_age_in_days = 6,
-                nbdow = p.next_birthday.date.format("  %a %d.%m.%y"),
-                nbdur = p.next_birthday.in_days,
-                width_nbdur = 5,
+                next_birthday_date = p.next_birthday.date.format("  %a %d.%m.%y"),
+                next_birthday_in_days = p.next_birthday.in_days,
+                width_next_birthday_in_days = 5,
+            );
+        }
+    }
+
+    pub fn print_jubidees(&self) {
+        for p in &self.people {
+            println!(
+                "\
+                 {name:<width_name$}\
+                 {age_in_years:>width_age_in_years$}\
+                 {age_in_days:>width_age_in_days$}\
+                 {next_jubidee_date}\
+                 {next_jubidee:>width_next_jubidee$}\
+                 {next_jubidee_in_days:>width_next_jubidee_in_days$}\
+                 ",
+                name = p.name,
+                width_name = 25,
+                age_in_years = p.age.in_years,
+                width_age_in_years = 4,
+                age_in_days = p.age.in_days,
+                width_age_in_days = 6,
+                next_jubidee_date = p.next_jubidee.date.format("  %a %d.%m.%y"),
+                next_jubidee_in_days = p.next_jubidee.in_days,
+                width_next_jubidee = 7,
+                next_jubidee = p.next_jubidee.jubidee,
+                width_next_jubidee_in_days = 5,
             );
         }
     }
@@ -147,17 +173,6 @@ impl Data {
             r = 0;
         }
         return r;
-    }
-
-    // sorting methods, note these of course require the ord trait, see below
-    pub fn sort_by_next_birthday(mut self) {
-        &self.people
-            .sort_by(|a, b| a.next_birthday.cmp(&b.next_birthday));
-    }
-
-    pub fn sort_by_next_jubidee(mut self) {
-        &self.people
-            .sort_by(|a, b| a.next_jubidee.cmp(&b.next_jubidee));
     }
 }
 
