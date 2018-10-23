@@ -1,37 +1,38 @@
-pub fn next_repdigit(i: u32) -> u32 {
-    let in_int: u32;
-    if i < 10 {
-        in_int = 10;
-    } else {
-        in_int = i;
+pub fn is_repdigit(number: u32) -> bool {
+    let mut b = true;
+    let number_str = number.to_string();
+    let first_char = number_str.chars().nth(0).unwrap();
+    println!("{:?}", first_char);
+    for c in number_str.chars() {
+        if first_char != c {
+            b = false;
+            break;
+        }
     }
-    let in_str = in_int.to_string();
-    let in_len = in_str.len();
+    return b;
+}
 
-    let mut out_str = "".to_string();
-    let step_str = String::from_utf8(vec![b'1'; in_len]).unwrap();
-    let step_int = step_str.parse::<u32>().unwrap();
-
-    for _ in 0..in_len {
-        out_str += &in_str[0..1];
+pub fn make_repdigit(digit: &str, length: usize) -> u32 {
+    let mut s = String::new();
+    for _n in 0..length {
+        s.push_str(&digit.to_string());
     }
-
-    let mut out_int = out_str.parse::<u32>().unwrap();
-    while out_int <= in_int {
-        out_int += step_int
-    }
-
-    return out_int;
+    let u: u32 = s.parse::<u32>().unwrap();
+    return u;
 }
 
 #[test]
-fn test_next_repdigit() {
-    assert_eq!(next_repdigit(0), 11);
-    assert_eq!(next_repdigit(3), 11);
-    assert_eq!(next_repdigit(10), 11);
-    assert_eq!(next_repdigit(12), 22);
-    assert_eq!(next_repdigit(288), 333);
-    assert_eq!(next_repdigit(12345), 22222);
-    assert_eq!(next_repdigit(75000), 77777);
-    assert_eq!(next_repdigit(4900111), 5555555);
+fn test_make_repdigit() {
+    assert_eq!(make_repdigit("1", 3), 111);
+    assert_eq!(make_repdigit("4", 4), 4444);
+    assert_eq!(make_repdigit("7", 4), 7777);
+    assert_eq!(make_repdigit("9", 5), 99999);
+}
+
+#[test]
+fn test_is_repdigit() {
+    assert_eq!(is_repdigit(111), true);
+    assert_eq!(is_repdigit(121), false);
+    assert_eq!(is_repdigit(39), false);
+    assert_eq!(is_repdigit(4447444), false);
 }
