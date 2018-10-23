@@ -1,5 +1,5 @@
 name:                  jubidee
-version:               "0.3.48"
+version:               "0.1.X"
 author:                Olaf Michaelis <o.mic@web.de>
 about:                 Jubidee - calculates jubilees and birthdays
 args:

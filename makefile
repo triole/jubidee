@@ -13,7 +13,7 @@ test: run_test
 
 run_build:
 	# replace version in args.yaml
-	cat "${ARGS_TPL}" | sed '/version/s/\.X\"/\.${COMMITNO}\"/g' > ${ARGS_YAML}
+	cat "${ARGS_TPL}" | sed '/version/s/\.X\"/\.${COMMIT_NO}\"/g' > ${ARGS_YAML}
 
 	# build binary
 	cargo build --release
