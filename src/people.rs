@@ -68,7 +68,10 @@ impl Data {
     }
 
     pub fn print_birthdays(&self, limit: &usize) {
-        let l = limit.to_owned();
+        let mut l = limit.to_owned();
+        if l == 0 {
+            l = self.people.len();
+        }
         for p in &self.people[0..l] {
             println!(
                 "\
@@ -92,7 +95,10 @@ impl Data {
     }
 
     pub fn print_jubidees(&self, limit: &usize) {
-        let l = limit.to_owned();
+        let mut l = limit.to_owned();
+        if l == 0 {
+            l = self.people.len();
+        }
         for p in &self.people[0..l] {
             println!(
                 "\
