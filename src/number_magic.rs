@@ -1,3 +1,11 @@
+pub fn next_jubidee(number: u32) -> u32 {
+    let mut v: Vec<u32> = Vec::new();
+    v.push(next_jubilee(number));
+    v.push(next_repdigit(number));
+    v.sort();
+    return v[0];
+}
+
 // jubilee related
 pub fn next_jubilee(number: u32) -> u32 {
     let mut base_jubilee = make_base_jubilee(number);
@@ -96,6 +104,14 @@ fn replace_last_characters(number: u32, last_n: usize) -> u32 {
     }
 }
 
+#[test]
+fn test_next_jubidee() {
+    assert_eq!(next_jubidee(5), 10);
+    assert_eq!(next_jubidee(41), 44);
+    assert_eq!(next_jubidee(99), 99);
+    assert_eq!(next_jubidee(101), 111);
+}
+
 // jubilee tests
 #[test]
 fn test_base_jubilee() {
@@ -126,6 +142,7 @@ fn test_next_jubilee() {
     assert_eq!(next_jubilee(3601), 4000);
 }
 
+// repdigit tests
 #[test]
 fn test_is_repdigit() {
     assert_eq!(is_repdigit(111), true);
