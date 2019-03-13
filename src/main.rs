@@ -3,9 +3,6 @@ extern crate clap;
 extern crate chrono;
 extern crate serde_yaml;
 
-use clap::App;
-
-mod argparse;
 mod config;
 mod env;
 mod number_magic;
@@ -14,8 +11,8 @@ mod util;
 
 fn main() {
     // argparse
-    let yaml = load_yaml!("args.yaml");
-    let args = App::from_yaml(yaml).get_matches();
+    let yaml = load_yaml!("../.argsprod.yaml").to_owned();
+    let args = olib_argparse::Argparse::init(yaml);
 
     // read people's birthday config
     let config = config::read(&env::config_file());
@@ -27,9 +24,9 @@ fn main() {
     }
 
     // print
-    let limit = argparse::val_usize(&args, "limit");
-    if argparse::bool(&args, "jubidee") == true {
-        if argparse::bool(&args, "reverse") == true {
+    let limit = args.val_usize("limit");
+    if args.bool("jubidee") == true {
+        if args.bool("reverse") == true {
             data.people
                 .sort_by(|a, b| a.next_jubidee.cmp(&b.next_jubidee).reverse());
         } else {
@@ -38,7 +35,7 @@ fn main() {
         }
         data.print_jubidees(&limit);
     } else {
-        if argparse::bool(&args, "reverse") == true {
+        if args.bool("reverse") == true {
             data.people
                 .sort_by(|a, b| a.next_birthday.cmp(&b.next_birthday).reverse());
         } else {

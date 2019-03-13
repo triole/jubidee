@@ -1,5 +1,4 @@
 use chrono;
-use chrono::offset::{Local, TimeZone};
 use chrono::prelude::*;
 use std::cmp::Ordering;
 
@@ -262,6 +261,7 @@ fn test_age_and_birthday_calculation() {
     );
 }
 
+#[cfg(test)]
 fn assert_person_data(
     base_date: &str,
     name: &str,
