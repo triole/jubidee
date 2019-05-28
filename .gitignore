@@ -2,5 +2,5 @@ Cargo.lock
 **/*.rs.bk
 build/
 target/
-src/args.yaml
+.argsprod.yaml
 *.vcf
