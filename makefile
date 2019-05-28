@@ -6,7 +6,6 @@ COMMIT_NO=$(shell git rev-list --all --count)
 ARGS_SRC=config/args.yaml
 ARGS_TRG=.argsprod.yaml
 
-
 all: make_args copy_config_files do_test do_build do_benchmark
 args: make_args
 benchmark: do_benchmark
@@ -17,6 +16,7 @@ test: copy_config_files do_test
 copy_config_files:
 	mkdir -p ${TARGET_FOLDER}
 	cp config/${APP_NAME}.yaml ${TARGET_FOLDER}/
+	mkdir -p target/debug
 	cp config/${APP_NAME}.yaml target/debug/
 
 make_args:
