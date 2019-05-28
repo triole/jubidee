@@ -26,9 +26,9 @@ do_benchmark:
 	hyperfine '"${TARGET_BUILD}"'
 
 do_build:
-	cargo build --release
+	cargo build --target x86_64-unknown-linux-musl --release
 	mkdir -p "${TARGET_FOLDER}"
-	mv "target/release/${APP_NAME}" "${TARGET_BUILD}"
+	mv "target/x86_64-unknown-linux-musl/release/${APP_NAME}" "${TARGET_BUILD}"
 	strip "${TARGET_BUILD}"
 
 do_test:
