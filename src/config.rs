@@ -1,7 +1,6 @@
 use serde_yaml;
 use std::collections::HashMap;
 
-use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
@@ -13,7 +12,7 @@ pub fn read(filename: &str) -> HashMap<String, u32> {
 
     let mut file = match File::open(&filename) {
         Err(err) => {
-            println!("Couldn't open {}: {}", display, err.description());
+            println!("Couldn't open {}: {}", display, err.to_string());
             process::exit(0x0101);
         }
         Ok(file) => file,

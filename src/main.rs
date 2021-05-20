@@ -3,6 +3,7 @@ extern crate clap;
 extern crate chrono;
 extern crate serde_yaml;
 
+mod argparse;
 mod config;
 mod env;
 mod number_magic;
@@ -12,7 +13,7 @@ mod util;
 fn main() {
     // argparse
     let yaml = load_yaml!("../.argsprod.yaml").to_owned();
-    let args = olib_argparse::Argparse::init(yaml);
+    let args = argparse::Argparse::init(yaml);
 
     // read people's birthday config
     let config = config::read(&env::config_file());
